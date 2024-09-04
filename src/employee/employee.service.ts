@@ -33,8 +33,12 @@ export class EmployeeService {
   findAll(page: number = 1, limit: number = 5, search?: string) {
     const startIndex = (page - 1) * limit;
     const endIndex = page * limit;
+    const totalPages = Math.ceil(this.employee.length / limit);
+    const size = this.employee.length;
 
-    const results = this.employee.slice(startIndex, endIndex);
+    const sortedEmployees = [...this.employee].sort((a, b) => b.id - a.id);
+
+    const results = sortedEmployees.slice(startIndex, endIndex);
 
     if (search) {
       const filteredResults = results.filter((employee) => {
@@ -50,6 +54,8 @@ export class EmployeeService {
         status: HttpStatus.OK,
         message: 'Success',
         total: filteredResults.length,
+        size: size,
+        totalPages: totalPages,
         data: filteredResults,
       };
     }
@@ -58,6 +64,8 @@ export class EmployeeService {
       status: HttpStatus.OK,
       message: 'Success',
       total: results.length,
+      totalPages: totalPages,
+      size: size,
       data: results,
     };
   }
